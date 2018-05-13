@@ -3,12 +3,12 @@ const Game = require("./Game");
 
 /**
  * RobotUser listens for challenges and spawns Games on accepting.
- *  
+ *
  */
 class RobotUser {
 
   /**
-   * Initialise with access token to lichess and a player algorithm.
+   * Initialise with interface to lichess and a player.
    */
   constructor(token, player) {
     this.api = new LichessApi(token);
@@ -18,6 +18,10 @@ class RobotUser {
   async start() {
     this.account = await this.api.accountInfo();
     console.log("Playing as " + this.account.data.username);
+    if (this.account.data.title != 'BOT') {
+      console.log('Upgrading account to BOT');
+      this.api.upgrade();
+    }
     this.api.streamEvents((event) => this.eventHandler(event));
     return this.account;
   }
@@ -41,15 +45,33 @@ class RobotUser {
   }
 
   async handleChallenge(challenge) {
-    if (challenge.rated) {
-      console.log("Declining rated challenge from " + challenge.challenger.id);
+    if (!challenge.rated && false) {
+      console.log("Declining non-rated challenge from " + challenge.challenger.id);
       this.api.declineChallenge(challenge.id);
+      return;
     }
-    else {
-      console.log("Accepting unrated challenge from " + challenge.challenger.id);
+
+    if (challenge.variant.key !== 'standard') {
+      console.log("Declining non-standard challenge from " + challenge.challenger.id);
+      this.api.declineChallenge(challenge.id);
+      return;
+    }
+
+    if (challenge.challenger.title && challenge.challenger.title !== 'BOT') {
+      console.log("Accepting title challenge from " + challenge.challenger.id);
       var accept = await this.api.acceptChallenge(challenge.id);
       console.log("Status " + accept.statusText);
     }
+
+    if (['bullet', 'ultraBullet', 'rapid', 'blitz'].indexOf(challenge.speed) == -1) {
+      console.log("Declining non-quick challenge from " + challenge.challenger.id);
+      this.api.declineChallenge(challenge.id);
+      return;
+    }
+
+    console.log("Accepting unrated challenge from " + challenge.challenger.id);
+    var accept = await this.api.acceptChallenge(challenge.id);
+    console.log("Status " + accept.statusText);
   }
 
 }

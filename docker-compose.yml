@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    function:
+        build: .
+        volumes:
+            - ".:/usr/app"
+        environment:
+            API_TOKEN: something
+        ports:
+            - "8081:80"

@@ -2,7 +2,7 @@ const axios = require("axios");
 const oboe = require("oboe");
 /**
  * Programatic interface to the web API of lichess https://lichess.org/api#tag/Chess-Bot
- *  
+ *
  */
 class LichessApi {
 
@@ -27,7 +27,7 @@ class LichessApi {
   }
 
   upgrade() {
-    return this.post("api/bot/accounts/upgrade");
+    return this.post("api/bot/account/upgrade");
   }
 
   accountInfo() {
@@ -61,40 +61,46 @@ class LichessApi {
     });
   }
 
-  logAndReturn(data) {
-    console.log(JSON.stringify(data.data)); 
-    return data;
-  }
-
   get(URL) {
-    console.log(`GET ${URL}`);
+    //console.log(`GET ${URL}`);
     return axios.get(URL + "?v=" + Date.now(), this.axiosConfig)
-      .then(this.logAndReturn)
+      .then(data => {
+        // console.log(JSON.stringify(data.data));
+        return data; })
       .catch(err => console.log(err));
   }
 
   post(URL, body) {
-    console.log(`POST ${URL} ` + JSON.stringify(body || {}));
+    //console.log(`POST ${URL} ` + JSON.stringify(body || {}));
     return axios.post(URL, body || {}, this.axiosConfig)
-      .then(this.logAndReturn)
+      .then(data => {
+        // console.log(JSON.stringify(data.data));
+        return data; })
       .catch(err => console.log(err.response.data));
   }
 
   /**
    * Connect to stream with handler.
-   * 
+   *
    * The axios library does not support streams in the browser so use oboe.
    */
   stream(URL, handler) {
-    console.log(`GET ${URL} stream`);
+    //console.log(`GET ${URL} stream`);
     oboe({
         method: "GET",
         url: this.baseURL + URL,
         headers: this.headers,
       })
       .node("{type}", function(data) {
-        console.log("STREAM data : " + JSON.stringify(data));
-        handler(data);
+        if (data) {
+          //console.log("STREAM data : " + JSON.stringify(data));
+          try {
+            handler(data);
+          } catch (e) {
+            console.log('-----------------');
+            console.log(e);
+          }
+        }
       }).fail(function(errorReport) {
         console.error(JSON.stringify(errorReport));
       });

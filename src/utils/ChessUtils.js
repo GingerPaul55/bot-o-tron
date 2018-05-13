@@ -6,8 +6,8 @@ const Chess = require("chess.js").Chess;
  */
 class ChessUtils {
 
-  constructor(fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1") {
-    this.chess = new Chess(fen);
+  constructor() {
+    this.chess = new Chess();
   }
 
   reset() {
@@ -114,6 +114,7 @@ class ChessUtils {
     const valueOf = { p: 1, n: 3, b: 3, r: 6, q: 9, k: 0 };
     return this.squaresOf(colour).map(square => valueOf[this.chess.get(square).type]).reduce((a, b) => a + b);
   }
+
 }
 
 module.exports = ChessUtils;
