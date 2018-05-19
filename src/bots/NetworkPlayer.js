@@ -15,7 +15,7 @@ class NetworkPlayer {
         let data = '';
         const postData = JSON.stringify(event);
         const options = {
-          agent = this.keepAliveAgent;
+          agent = this.keepAliveAgent,
           hostname: this.url.hostname,
           port: this.url.port ?: 80,
           path: this.url.path ? '/',
