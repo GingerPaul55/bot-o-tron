@@ -11,11 +11,11 @@ class NetworkPlayer {
   }
 
   async getNextMove(event) {
-    await new Promise(function(resolve, reject) {
+    await new Promise((resolve, reject) => {
         let data = '';
         const postData = JSON.stringify(event);
         const options = {
-          agent = this.keepAliveAgent,
+          agent: this.keepAliveAgent,
           hostname: this.url.hostname,
           port: this.url.port ? this.url.port : 80,
           path: this.url.path ? this.url.path : '/',
