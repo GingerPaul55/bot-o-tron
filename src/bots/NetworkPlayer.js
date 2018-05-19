@@ -17,8 +17,8 @@ class NetworkPlayer {
         const options = {
           agent = this.keepAliveAgent,
           hostname: this.url.hostname,
-          port: this.url.port ?: 80,
-          path: this.url.path ? '/',
+          port: this.url.port ? this.url.port : 80,
+          path: this.url.path ? this.url.path : '/',
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
