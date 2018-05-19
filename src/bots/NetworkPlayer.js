@@ -6,7 +6,7 @@ const Http = require('http');
 class NetworkPlayer {
 
   constructor(url) {
-    this.url = new URL(this.url);
+    this.url = new URL(url);
     this.keepAliveAgent = new Http.Agent({ keepAlive: true });
   }
 
@@ -47,7 +47,7 @@ class NetworkPlayer {
         // write data to request body
         req.write(postData);
         req.end();
-    }
+    });
   }
 
   getReply(chat) {
