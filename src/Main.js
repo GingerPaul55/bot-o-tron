@@ -40,6 +40,7 @@ async function begin() {
     process.env.API_TOKEN,
     new AggregatePlayer([
       new BookPlayer('/usr/app/books/gm2001.bin', 'Polyglot'), // Book
+      new NetworkPlayer(process.env.NETWORK_PLAYER_URL), // Bot, networked
       new UciPlayer('/usr/app/bin/stockfish'), // Bot
       new SwarmKingPlayer(), // Anything!
     ])
