@@ -6,7 +6,8 @@ const ChessUtils = require("../utils/ChessUtils");
  */
 class SwarmKingPlayer {
 
-  getNextMove(moves) {
+  getNextMove(event) {
+    const moves = event.moves;
     const chess = new ChessUtils();
     chess.applyMoves(moves);
     var legalMoves = chess.legalMoves();

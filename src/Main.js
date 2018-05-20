@@ -39,10 +39,24 @@ async function begin() {
   links += await startBot(
     process.env.API_TOKEN,
     new AggregatePlayer([
-      new BookPlayer('/usr/app/books/gm2001.bin', 'Polyglot'), // Book
-      new NetworkPlayer(process.env.NETWORK_PLAYER_URL), // Bot, networked
-      new UciPlayer('/usr/app/bin/stockfish'), // Bot
-      new SwarmKingPlayer(), // Anything!
+      {
+          'player': new BookPlayer('/usr/app/books/gm2001.bin', 'Polyglot'),
+          // Don't waste time when we're not in the opening.
+          'condition': (event) => { return event.movesArray().length < 20; }
+      },
+      {
+          'player': new NetworkPlayer(process.env.NETWORK_PLAYER_URL),
+          // Networks can be slow and we have no time.
+          'condition': (event) => { return (event.isTurn('white') ? event.wtime : event.btime) > 10000 }
+      },
+      {
+          // Local Uci engine is quicker than networked.
+          'player': new UciPlayer('/usr/app/bin/stockfish')
+      },
+      {
+          // Do any old move.
+          'player': new SwarmKingPlayer()
+      }
     ])
   ) || '';
 

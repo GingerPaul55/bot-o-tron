@@ -9,7 +9,11 @@ class AggregatePlayer {
 
   async getNextMove(event) {
     for(let player of this.players) {
-      let result = await player.getNextMove(event);
+      if (player.condition && !player.player.condition(event)) {
+          continue;
+      }
+
+      let result = await player.player.getNextMove(event);
       if (result && result.bestmove) {
         return result;
       }

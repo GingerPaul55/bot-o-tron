@@ -10,15 +10,14 @@ class NetworkPlayer {
     this.keepAliveAgent = new Http.Agent({ keepAlive: true });
   }
 
-  async getNextMove(event) {
-    await new Promise((resolve, reject) => {
+  getNextMove(event) {
+    return new Promise((resolve, reject) => {
         let data = '';
-        const postData = JSON.stringify(event);
         const options = {
           agent: this.keepAliveAgent,
           hostname: this.url.hostname,
           port: this.url.port ? this.url.port : 80,
-          path: this.url.path ? this.url.path : '/',
+          path: this.url.pathname ? this.url.pathname : '/',
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -28,14 +27,17 @@ class NetworkPlayer {
 
         const req = Http.request(options, (res) => {
           if (res.statusCode !== 200) {
-              return reject();
+              return reject("status code was "+res.statusCode);
           }
           res.setEncoding('utf8');
           res.on('data', (chunk) => {
               // @todo: Support more than one chunk.
               data = chunk.toString('utf8');
+              console.log("data1", data);
           });
           res.on('end', () => {
+              console.log("data2", data);
+              console.log("data3", JSON.parse(data));
               return resolve(JSON.parse(data));
           });
         });
